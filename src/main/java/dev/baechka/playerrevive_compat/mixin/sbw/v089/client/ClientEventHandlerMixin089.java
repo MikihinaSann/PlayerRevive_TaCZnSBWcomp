@@ -27,7 +27,6 @@ public class ClientEventHandlerMixin089 {
         LocalPlayer player = Minecraft.getInstance().player;
         if (player != null && BleedingHelper.isShootingBlocked(player)) {
             resetFireState();
-            ClientEventHandler.drawTime = 1;
             ci.cancel();
         }
     }
@@ -44,20 +43,12 @@ public class ClientEventHandlerMixin089 {
         LocalPlayer player = Minecraft.getInstance().player;
         if (player != null && BleedingHelper.isShootingBlocked(player)) {
             resetFireState();
-            ClientEventHandler.zoom = false;
-            ClientEventHandler.fireSpread = 0;
-            ClientEventHandler.fireCooldown = 0;
-
-            if (ClientEventHandler.drawTime < 1) {
-                ClientEventHandler.drawTime = Math.min(ClientEventHandler.drawTime + 0.1, 1);
-            }
         }
     }
 
     private static void resetFireState() {
         ClientEventHandler.holdingFireKey = false;
         ClientEventHandler.holdingFireKeyTicks = 0;
-        ClientEventHandler.fireRecoilTime = 0;
         ClientEventHandler.burstFireAmount = 0;
     }
 }
