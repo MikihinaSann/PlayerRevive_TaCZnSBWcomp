@@ -28,7 +28,7 @@ public class LocalPlayerShootMixin {
     private void onShoot(CallbackInfoReturnable<ShootResult> cir) {
         LocalPlayer player = Minecraft.getInstance().player;
 
-        if (player != null && BleedingHelper.isBleeding(player)) {
+        if (player != null && BleedingHelper.isShootingBlocked(player)) {
             // Сбрасываем состояние записи стрельбы
             data.isShootRecorded = true;
 

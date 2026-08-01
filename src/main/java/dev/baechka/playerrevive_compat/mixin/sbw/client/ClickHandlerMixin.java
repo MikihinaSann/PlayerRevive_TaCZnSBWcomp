@@ -26,7 +26,7 @@ public class ClickHandlerMixin {
      */
     @Inject(method = "handleWeaponFirePress", at = @At("HEAD"), cancellable = true)
     private static void onHandleWeaponFirePress(Player player, ItemStack stack, CallbackInfo ci) {
-        if (player != null && BleedingHelper.isBleeding(player)) {
+        if (player != null && BleedingHelper.isShootingBlocked(player)) {
             // Сбрасываем все флаги стрельбы
             ClientEventHandler.holdingFireKey = false;
             ClientEventHandler.holdingFireKeyTicks = 0;
@@ -45,7 +45,7 @@ public class ClickHandlerMixin {
     private static void onButtonPressedHead(InputEvent.MouseButton.Pre event, CallbackInfo ci) {
         LocalPlayer player = Minecraft.getInstance().player;
 
-        if (player != null && BleedingHelper.isBleeding(player)) {
+        if (player != null && BleedingHelper.isShootingBlocked(player)) {
             // Блокируем левый клик мыши (стрельба) - обычно button 0
             if (event.getButton() == 0) {
                 ci.cancel();
@@ -60,7 +60,7 @@ public class ClickHandlerMixin {
     private static void onKeyPressedHead(InputEvent.Key event, CallbackInfo ci) {
         LocalPlayer player = Minecraft.getInstance().player;
 
-        if (player != null && BleedingHelper.isBleeding(player)) {
+        if (player != null && BleedingHelper.isShootingBlocked(player)) {
             // Сбрасываем флаги при любом нажатии клавиш
             ClientEventHandler.holdingFireKey = false;
             ClientEventHandler.holdingFireKeyTicks = 0;

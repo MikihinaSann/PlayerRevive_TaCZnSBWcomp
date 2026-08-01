@@ -17,6 +17,8 @@ public class ModConfig {
     
     public static class GeneralConfig {
         public final ForgeConfigSpec.BooleanValue canShootWhenDowned;
+        public final ForgeConfigSpec.BooleanValue killDownedPlayerWithoutOnlineTeammates;
+        public final ForgeConfigSpec.IntValue stateSyncIntervalTicks;
 
         GeneralConfig(ForgeConfigSpec.Builder builder) {
             builder.push("general");
@@ -24,6 +26,14 @@ public class ModConfig {
             canShootWhenDowned = builder
                     .comment("When true, downed (bleeding) players can still shoot their weapons")
                     .define("canShootWhenDowned", false);
+
+            killDownedPlayerWithoutOnlineTeammates = builder
+                    .comment("When true, a downed player in a vanilla /team dies immediately if no other team member is online")
+                    .define("killDownedPlayerWithoutOnlineTeammates", true);
+
+            stateSyncIntervalTicks = builder
+                    .comment("How often the server re-sends authoritative PlayerRevive states (20 ticks = 1 second)")
+                    .defineInRange("stateSyncIntervalTicks", 100, 20, 1200);
 
             builder.pop();
         }

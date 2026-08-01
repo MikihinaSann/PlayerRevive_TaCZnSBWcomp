@@ -50,7 +50,7 @@ class TaczEventHandlerImpl {
             Object shooter = getShooterMethod.invoke(event);
 
             if (shooter instanceof Player player) {
-                if (BleedingHelper.isBleeding(player)) {
+                if (BleedingHelper.isShootingBlocked(player)) {
                     event.setCanceled(true);
                 }
             }

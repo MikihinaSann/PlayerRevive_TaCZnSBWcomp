@@ -24,7 +24,7 @@ public class ClientEventHandlerMixin {
      */
     @Inject(method = "shootClient", at = @At("HEAD"), cancellable = true)
     private static void onShootClient(Player player, CallbackInfo ci) {
-        if (player != null && BleedingHelper.isBleeding(player)) {
+        if (player != null && BleedingHelper.isShootingBlocked(player)) {
             // Сбрасываем переменные связанные со стрельбой
             ClientEventHandler.holdingFireKey = false;
             ClientEventHandler.holdingFireKeyTicks = 0;
@@ -43,7 +43,7 @@ public class ClientEventHandlerMixin {
     private static void onHandleClientShoot(CallbackInfo ci) {
         LocalPlayer player = Minecraft.getInstance().player;
 
-        if (player != null && BleedingHelper.isBleeding(player)) {
+        if (player != null && BleedingHelper.isShootingBlocked(player)) {
             // Сбрасываем переменные связанные со стрельбой
             ClientEventHandler.holdingFireKey = false;
             ClientEventHandler.holdingFireKeyTicks = 0;
@@ -62,7 +62,7 @@ public class ClientEventHandlerMixin {
      */
     @Inject(method = "playGunClientSounds", at = @At("HEAD"), cancellable = true)
     private static void onPlayGunClientSounds(Player player, CallbackInfo ci) {
-        if (player != null && BleedingHelper.isBleeding(player)) {
+        if (player != null && BleedingHelper.isShootingBlocked(player)) {
             ci.cancel();
         }
     }
@@ -75,7 +75,7 @@ public class ClientEventHandlerMixin {
     private static void onHandleClientTick(TickEvent.ClientTickEvent event, CallbackInfo ci) {
         LocalPlayer player = Minecraft.getInstance().player;
 
-        if (player != null && BleedingHelper.isBleeding(player)) {
+        if (player != null && BleedingHelper.isShootingBlocked(player)) {
             // Принудительно сбрасываем все флаги стрельбы
             ClientEventHandler.holdingFireKey = false;
             ClientEventHandler.holdingFireKeyTicks = 0;

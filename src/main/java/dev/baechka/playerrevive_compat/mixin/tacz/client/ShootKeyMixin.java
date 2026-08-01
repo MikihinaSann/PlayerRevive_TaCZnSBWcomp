@@ -27,7 +27,7 @@ public class ShootKeyMixin {
     private static void onAutoShoot(TickEvent.ClientTickEvent event, CallbackInfo ci) {
         LocalPlayer player = Minecraft.getInstance().player;
 
-        if (player != null && BleedingHelper.isBleeding(player)) {
+        if (player != null && BleedingHelper.isShootingBlocked(player)) {
             ci.cancel();
         }
     }
@@ -40,7 +40,7 @@ public class ShootKeyMixin {
     private static void onSemiShoot(InputEvent.MouseButton.Post event, CallbackInfo ci) {
         LocalPlayer player = Minecraft.getInstance().player;
 
-        if (player != null && BleedingHelper.isBleeding(player)) {
+        if (player != null && BleedingHelper.isShootingBlocked(player)) {
             ci.cancel();
         }
     }
@@ -52,7 +52,7 @@ public class ShootKeyMixin {
     private static void onAutoShootController(CallbackInfoReturnable<Boolean> cir) {
         LocalPlayer player = Minecraft.getInstance().player;
 
-        if (player != null && BleedingHelper.isBleeding(player)) {
+        if (player != null && BleedingHelper.isShootingBlocked(player)) {
             cir.setReturnValue(false);
         }
     }
@@ -64,7 +64,7 @@ public class ShootKeyMixin {
     private static void onSemiShootController(boolean isPress, CallbackInfoReturnable<Boolean> cir) {
         LocalPlayer player = Minecraft.getInstance().player;
 
-        if (player != null && BleedingHelper.isBleeding(player)) {
+        if (player != null && BleedingHelper.isShootingBlocked(player)) {
             cir.setReturnValue(false);
         }
     }

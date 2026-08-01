@@ -19,7 +19,7 @@ public class ClientInputHandler {
     public static void onClientTick(TickEvent.ClientTickEvent event) {
         if (event.phase != TickEvent.Phase.START) return;
         LocalPlayer player = Minecraft.getInstance().player;
-        if (player != null && BleedingHelper.isBleeding(player)) {
+        if (player != null && BleedingHelper.isShootingBlocked(player)) {
             resetSbwFireState();
         }
     }
