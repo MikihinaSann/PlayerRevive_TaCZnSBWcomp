@@ -1,6 +1,5 @@
 package dev.baechka.playerrevive_compat.mixin.sbw.client;
 
-import com.atsuishio.superbwarfare.client.ClickHandler;
 import com.atsuishio.superbwarfare.event.ClientEventHandler;
 import dev.baechka.playerrevive_compat.util.BleedingHelper;
 import net.minecraft.client.Minecraft;
@@ -17,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
  * Клиентский миксин для блокировки обработки нажатия кнопки стрельбы SuperbWarfare
  * когда игрок находится в состоянии bleeding
  */
-@Mixin(value = ClickHandler.class, remap = false)
+@Mixin(targets = "com.atsuishio.superbwarfare.client.ClickHandler", remap = false)
 public class ClickHandlerMixin {
 
     /**

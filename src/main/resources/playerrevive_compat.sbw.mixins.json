@@ -6,11 +6,13 @@
   "refmap": "playerrevive_compat.refmap.json",
   "plugin": "dev.baechka.playerrevive_compat.mixin.SbwMixinPlugin",
   "mixins": [
-    "ShootMessageMixin"
+    "ShootMessageMixin",
+    "v089.ShootMessageMixin089"
   ],
   "client": [
     "client.ClientEventHandlerMixin",
-    "client.ClickHandlerMixin"
+    "client.ClickHandlerMixin",
+    "v089.client.ClientEventHandlerMixin089"
   ],
   "injectors": {
     "defaultRequire": 0
