@@ -30,6 +30,7 @@ public class ClickHandlerMixin {
             ClientEventHandler.holdingFireKey = false;
             ClientEventHandler.holdingFireKeyTicks = 0;
             ClientEventHandler.burstFireAmount = 0;
+            ClientEventHandler.zoom = false;
 
             ci.cancel();
         }

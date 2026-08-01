@@ -34,6 +34,16 @@ public class ClientInputHandler {
             setStatic(handler, "holdingFireKey", false);
             setStatic(handler, "holdingFireKeyTicks", 0);
             setStatic(handler, "burstFireAmount", 0);
+            setStatic(handler, "zoom", false);
+            setStatic(handler, "fireSpread", 0d);
+            setStatic(handler, "fireCooldown", 0d);
+
+            var drawTimeField = handler.getDeclaredField("drawTime");
+            drawTimeField.setAccessible(true);
+            double current = drawTimeField.getDouble(null);
+            if (current < 1.0) {
+                drawTimeField.setDouble(null, Math.min(current + 0.05, 1.0));
+            }
         } catch (ClassNotFoundException ignored) {
             // Мод не установлен — ничего не делаем
         } catch (Exception ignored) {

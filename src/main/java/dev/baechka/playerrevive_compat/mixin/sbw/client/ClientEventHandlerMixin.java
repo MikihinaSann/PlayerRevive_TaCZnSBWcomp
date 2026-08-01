@@ -28,6 +28,7 @@ public class ClientEventHandlerMixin {
             // Сбрасываем переменные связанные со стрельбой
             ClientEventHandler.holdingFireKey = false;
             ClientEventHandler.holdingFireKeyTicks = 0;
+            ClientEventHandler.fireRecoilTime = 0;
             ClientEventHandler.burstFireAmount = 0;
 
             ci.cancel();
@@ -46,7 +47,11 @@ public class ClientEventHandlerMixin {
             // Сбрасываем переменные связанные со стрельбой
             ClientEventHandler.holdingFireKey = false;
             ClientEventHandler.holdingFireKeyTicks = 0;
+            ClientEventHandler.fireRecoilTime = 0;
             ClientEventHandler.burstFireAmount = 0;
+
+            // Устанавливаем drawTime = 1 для анимации убирания оружия
+            ClientEventHandler.drawTime = 1;
 
             ci.cancel();
         }
@@ -75,6 +80,14 @@ public class ClientEventHandlerMixin {
             ClientEventHandler.holdingFireKey = false;
             ClientEventHandler.holdingFireKeyTicks = 0;
             ClientEventHandler.burstFireAmount = 0;
+            ClientEventHandler.zoom = false;
+            ClientEventHandler.fireSpread = 0;
+            ClientEventHandler.fireCooldown = 0;
+
+            // Анимация убранного оружия
+            if (ClientEventHandler.drawTime < 1) {
+                ClientEventHandler.drawTime = Math.min(ClientEventHandler.drawTime + 0.1, 1);
+            }
         }
     }
 }
