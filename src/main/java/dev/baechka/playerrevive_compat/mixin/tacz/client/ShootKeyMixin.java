@@ -2,29 +2,34 @@ package dev.baechka.playerrevive_compat.mixin.tacz.client;
 
 import com.tacz.guns.client.input.ShootKey;
 import dev.baechka.playerrevive_compat.util.BleedingHelper;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraftforge.client.event.InputEvent;
-import net.minecraftforge.event.TickEvent;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /**
- * Клиентский миксин для блокировки автоматической стрельбы TaCZ
+ * Клиентский миксин для блокировки автоматической стрельбы TACZ
  * на каждом клиентском тике когда игрок находится в состоянии bleeding
  */
+@Environment(EnvType.CLIENT)
 @Mixin(value = ShootKey.class, remap = false)
 public class ShootKeyMixin {
+
+    @Shadow
+    private static boolean controllerShootDown;
 
     /**
      * Блокируем autoShoot если игрок в состоянии bleeding
      * Это предотвращает автоматическую стрельбу в full-auto/burst режимах
      */
-    @Inject(method = "autoShoot(Lnet/minecraftforge/event/TickEvent$ClientTickEvent;)V", at = @At("HEAD"), cancellable = true)
-    private static void onAutoShoot(TickEvent.ClientTickEvent event, CallbackInfo ci) {
+    @Inject(method = "autoShoot", at = @At("HEAD"), cancellable = true)
+    private static void onAutoShoot(Minecraft mc, boolean isPhaseEnd, CallbackInfo ci) {
         LocalPlayer player = Minecraft.getInstance().player;
 
         if (player != null && BleedingHelper.isShootingBlocked(player)) {
@@ -33,38 +38,14 @@ public class ShootKeyMixin {
     }
 
     /**
-     * Блокируем semiShoot если игрок в состоянии bleeding
-     * Это предотвращает полуавтоматическую стрельбу
+     * Блокируем ввод стрельбы с контроллера если игрок в состоянии bleeding
      */
-    @Inject(method = "semiShoot(Lnet/minecraftforge/client/event/InputEvent$MouseButton$Post;)V", at = @At("HEAD"), cancellable = true)
-    private static void onSemiShoot(InputEvent.MouseButton.Post event, CallbackInfo ci) {
+    @Inject(method = "shootControllerTick", at = @At("HEAD"), cancellable = true)
+    private static void onShootControllerTick(boolean isShootDown, CallbackInfoReturnable<Boolean> cir) {
         LocalPlayer player = Minecraft.getInstance().player;
 
         if (player != null && BleedingHelper.isShootingBlocked(player)) {
-            ci.cancel();
-        }
-    }
-
-    /**
-     * Блокируем autoShootController если игрок в состоянии bleeding
-     */
-    @Inject(method = "autoShootController", at = @At("HEAD"), cancellable = true)
-    private static void onAutoShootController(CallbackInfoReturnable<Boolean> cir) {
-        LocalPlayer player = Minecraft.getInstance().player;
-
-        if (player != null && BleedingHelper.isShootingBlocked(player)) {
-            cir.setReturnValue(false);
-        }
-    }
-
-    /**
-     * Блокируем semiShootController если игрок в состоянии bleeding
-     */
-    @Inject(method = "semiShootController", at = @At("HEAD"), cancellable = true)
-    private static void onSemiShootController(boolean isPress, CallbackInfoReturnable<Boolean> cir) {
-        LocalPlayer player = Minecraft.getInstance().player;
-
-        if (player != null && BleedingHelper.isShootingBlocked(player)) {
+            controllerShootDown = false;
             cir.setReturnValue(false);
         }
     }

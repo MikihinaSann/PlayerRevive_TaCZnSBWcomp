@@ -1,8 +1,8 @@
 package dev.baechka.playerrevive_compat.util;
 
 import dev.baechka.playerrevive_compat.config.ModConfig;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.fml.ModList;
 import team.creative.playerrevive.server.PlayerReviveServer;
 
 /**
@@ -10,8 +10,7 @@ import team.creative.playerrevive.server.PlayerReviveServer;
  */
 public class BleedingHelper {
 
-    private static final boolean PLAYER_REVIVE_LOADED = ModList.get().isLoaded("playerrevive");
-    private static final String BLEEDING_TAG = "playerrevive:bleeding";
+    private static final boolean PLAYER_REVIVE_LOADED = FabricLoader.getInstance().isModLoaded("playerrevive");
 
     /**
      * Проверяет, находится ли игрок в состоянии bleeding
@@ -21,13 +20,11 @@ public class BleedingHelper {
             return false;
         }
         try {
-            // Основной источник – capability PlayerRevive
+            // Основной источник – состояние PlayerRevive
             return PlayerReviveServer.isBleeding(player);
         } catch (Throwable ignored) {
-            // падаем к NBT ниже
+            return false;
         }
-        // Fallback: тег NBT, который PlayerRevive дублирует на игрока
-        return player.getPersistentData().getBoolean(BLEEDING_TAG);
     }
 
     public static boolean isPlayerReviveLoaded() {

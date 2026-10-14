@@ -1,6 +1,6 @@
 package dev.baechka.playerrevive_compat.mixin;
 
-import net.minecraftforge.fml.loading.LoadingModList;
+import net.fabricmc.loader.api.FabricLoader;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
@@ -10,15 +10,15 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Mixin плагин для условной загрузки миксинов TaCZ
- * Загружает миксины только если TaCZ присутствует
+ * Mixin плагин для условной загрузки миксинов TACZ
+ * Загружает миксины только если TACZ присутствует
  */
 public class TaczMixinPlugin implements IMixinConfigPlugin {
 
     private static final boolean TACZ_LOADED;
 
     static {
-        TACZ_LOADED = LoadingModList.get().getModFileById("tacz") != null;
+        TACZ_LOADED = FabricLoader.getInstance().isModLoaded("tacz");
     }
 
     @Override
@@ -41,7 +41,7 @@ public class TaczMixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public List<String> getMixins() {
-        // Если TaCZ не загружен, возвращаем пустой список - миксины не будут даже пытаться загружаться
+        // Если TACZ не загружен, возвращаем пустой список - миксины не будут даже пытаться загружаться
         if (!TACZ_LOADED) {
             return Collections.emptyList();
         }

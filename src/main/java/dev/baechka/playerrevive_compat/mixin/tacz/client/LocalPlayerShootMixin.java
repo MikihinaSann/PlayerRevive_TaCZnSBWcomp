@@ -4,6 +4,8 @@ import com.tacz.guns.api.entity.ShootResult;
 import com.tacz.guns.client.gameplay.LocalPlayerDataHolder;
 import com.tacz.guns.client.gameplay.LocalPlayerShoot;
 import dev.baechka.playerrevive_compat.util.BleedingHelper;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import org.spongepowered.asm.mixin.Final;
@@ -14,9 +16,10 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /**
- * Клиентский миксин для блокировки стрельбы TaCZ
+ * Клиентский миксин для блокировки стрельбы TACZ
  * когда игрок находится в состоянии bleeding
  */
+@Environment(EnvType.CLIENT)
 @Mixin(value = LocalPlayerShoot.class, remap = false)
 public class LocalPlayerShootMixin {
 

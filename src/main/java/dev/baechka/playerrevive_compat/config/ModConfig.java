@@ -1,28 +1,33 @@
 package dev.baechka.playerrevive_compat.config;
 
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.common.Mod;
+import dev.baechka.playerrevive_compat.PlayerReviveCompat;
+import fuzs.forgeconfigapiport.fabric.api.neoforge.v4.NeoForgeConfigRegistry;
+import net.neoforged.fml.config.ModConfig.Type;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
-@Mod.EventBusSubscriber
 public class ModConfig {
-    private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
-    
+    private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
+
     public static final GeneralConfig GENERAL;
-    public static final ForgeConfigSpec SPEC;
-    
+    public static final ModConfigSpec SPEC;
+
     static {
         GENERAL = new GeneralConfig(BUILDER);
         SPEC = BUILDER.build();
     }
-    
-    public static class GeneralConfig {
-        public final ForgeConfigSpec.BooleanValue canShootWhenDowned;
-        public final ForgeConfigSpec.BooleanValue killDownedPlayerWithoutOnlineTeammates;
-        public final ForgeConfigSpec.IntValue stateSyncIntervalTicks;
 
-        GeneralConfig(ForgeConfigSpec.Builder builder) {
+    public static void register() {
+        NeoForgeConfigRegistry.INSTANCE.register(PlayerReviveCompat.MODID, Type.COMMON, SPEC);
+    }
+
+    public static class GeneralConfig {
+        public final ModConfigSpec.BooleanValue canShootWhenDowned;
+        public final ModConfigSpec.BooleanValue killDownedPlayerWithoutOnlineTeammates;
+        public final ModConfigSpec.IntValue stateSyncIntervalTicks;
+
+        GeneralConfig(ModConfigSpec.Builder builder) {
             builder.push("general");
-            
+
             canShootWhenDowned = builder
                     .comment("When true, downed (bleeding) players can still shoot their weapons")
                     .define("canShootWhenDowned", false);

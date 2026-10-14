@@ -2,6 +2,7 @@ package dev.baechka.playerrevive_compat.mixin.tacz;
 
 import com.tacz.guns.util.HitboxHelper;
 import dev.baechka.playerrevive_compat.util.BleedingHelper;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
@@ -14,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /**
  * Миксин для исправления хитбокса игрока в состоянии bleeding
- * TaCZ использует кешированный хитбокс для компенсации латентности,
+ * TACZ использует кешированный хитбокс для компенсации латентности,
  * но не учитывает что игрок может лежать (Pose.SWIMMING от PlayerRevive)
  */
 @Mixin(value = HitboxHelper.class, remap = false)
@@ -50,7 +51,7 @@ public class HitboxHelperMixin {
      * Также исправляем getFixedBoundingBox для случаев когда latency fix отключен
      */
     @Inject(method = "getFixedBoundingBox", at = @At("RETURN"), cancellable = true)
-    private static void fixBleedingFixedHitbox(net.minecraft.world.entity.Entity entity, net.minecraft.world.entity.Entity owner, CallbackInfoReturnable<AABB> cir) {
+    private static void fixBleedingFixedHitbox(Entity entity, Entity owner, CallbackInfoReturnable<AABB> cir) {
         if (entity instanceof Player player && BleedingHelper.isBleeding(player)) {
             AABB currentBox = cir.getReturnValue();
 

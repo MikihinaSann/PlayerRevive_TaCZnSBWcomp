@@ -1,0 +1,34 @@
+{
+	"schemaVersion": 1,
+	"id": "playerrevive_compat",
+	"version": "${version}",
+	"name": "PlayerRevive TACZ compatibility",
+	"description": "Compatibility layer between PlayerRevive and TACZ. Prevents players in bleeding state from shooting and fixes hitboxes while bleeding.",
+	"authors": [
+		"Baechka"
+	],
+	"contact": {},
+	"license": "GPL-3.0",
+	"icon": "assets/playerrevive_compat/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"dev.baechka.playerrevive_compat.PlayerReviveCompat"
+		]
+	},
+	"mixins": [
+		"playerrevive_compat.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.17.2",
+		"minecraft": "~1.21.1",
+		"java": ">=21",
+		"fabric-api": "*",
+		"playerrevive": "*",
+		"creativecore": "*",
+		"forgeconfigapiport": "*"
+	},
+	"suggests": {
+		"tacz": "*"
+	}
+}

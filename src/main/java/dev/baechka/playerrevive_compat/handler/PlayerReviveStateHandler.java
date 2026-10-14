@@ -1,35 +1,42 @@
 package dev.baechka.playerrevive_compat.handler;
 
-import dev.baechka.playerrevive_compat.PlayerReviveTaCZnSBW;
 import dev.baechka.playerrevive_compat.config.ModConfig;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.scores.Team;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import team.creative.playerrevive.PlayerRevive;
+import team.creative.playerrevive.PlayerReviveFabric;
 import team.creative.playerrevive.api.IBleeding;
 import team.creative.playerrevive.packet.HelperPacket;
 import team.creative.playerrevive.server.PlayerReviveServer;
 
+import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
-@Mod.EventBusSubscriber(modid = PlayerReviveTaCZnSBW.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public final class PlayerReviveStateHandler {
+    // Helpers that currently have an active revive target, so a single
+    // stop packet can be sent when the revive ends instead of spamming
+    // HelperPacket every sync interval
+    private static final Set<UUID> ACTIVE_HELPERS = ConcurrentHashMap.newKeySet();
+
     private PlayerReviveStateHandler() {}
 
-    @SubscribeEvent
-    public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
-        if (event.phase != TickEvent.Phase.END || !(event.player instanceof ServerPlayer player)) {
-            return;
-        }
+    public static void register() {
+        ServerTickEvents.END_SERVER_TICK.register(PlayerReviveStateHandler::onServerTick);
+    }
 
-        killIfTeamHasNoOtherOnlinePlayers(player);
+    private static void onServerTick(MinecraftServer server) {
+        for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+            killIfTeamHasNoOtherOnlinePlayers(player);
 
-        int syncInterval = ModConfig.GENERAL.stateSyncIntervalTicks.get();
-        if (player.tickCount % syncInterval == 0) {
-            PlayerReviveServer.sendUpdatePacket(player);
-            syncHelperState(player);
+            int syncInterval = ModConfig.GENERAL.stateSyncIntervalTicks.get();
+            if (player.tickCount % syncInterval == 0) {
+                if (PlayerReviveServer.isBleeding(player)) {
+                    PlayerReviveServer.sendUpdatePacket(player);
+                }
+                syncHelperState(player);
+            }
         }
     }
 
@@ -43,7 +50,7 @@ public final class PlayerReviveStateHandler {
             return;
         }
 
-        boolean hasOnlineTeammate = player.server.getPlayerList().getPlayers().stream()
+        boolean hasOnlineTeammate = player.getServer().getPlayerList().getPlayers().stream()
                 .anyMatch(other -> other != player && other.getTeam() == team);
 
         if (!hasOnlineTeammate) {
@@ -54,7 +61,7 @@ public final class PlayerReviveStateHandler {
     private static void syncHelperState(ServerPlayer helper) {
         UUID targetId = null;
 
-        for (ServerPlayer target : helper.server.getPlayerList().getPlayers()) {
+        for (ServerPlayer target : helper.getServer().getPlayerList().getPlayers()) {
             IBleeding bleeding = PlayerReviveServer.getBleeding(target);
             if (bleeding.isBleeding() && bleeding.revivingPlayers().contains(helper)) {
                 targetId = target.getUUID();
@@ -62,6 +69,11 @@ public final class PlayerReviveStateHandler {
             }
         }
 
-        PlayerRevive.NETWORK.sendToClient(new HelperPacket(targetId, targetId != null), helper);
+        if (targetId != null) {
+            ACTIVE_HELPERS.add(helper.getUUID());
+            PlayerReviveFabric.NETWORK.sendToClient(new HelperPacket(targetId, true), helper);
+        } else if (ACTIVE_HELPERS.remove(helper.getUUID())) {
+            PlayerReviveFabric.NETWORK.sendToClient(new HelperPacket(null, false), helper);
+        }
     }
 }
